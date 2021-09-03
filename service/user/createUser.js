@@ -1,41 +1,48 @@
-// const User = require("../../model/entity/user/user");
-// const status = require("../../model/enum/status");
+const User = require("../../model/entity/user/user");
+const status = require("../../model/enum/status");
 
-// function create(data) {
-//   return new Promise(function (resolve, reject) {
-//     const exist = User.findOne({
-//       $or: [
-//         {
-//           email: data.email,
-//         },
-//         {
-//           username: data.username,
-//         },
-//       ],
-//     });
+function create(data) {
+  return new Promise(function (resolve, reject) {
+    const username = data.username;
 
-//     if (exist) {
-//       reject("User already existed");
-//     }
+    User.findOne(
+      // { $or: [{ email: data.email }, { username: data.username }] },
+      {
+        $or: [
+          { email: data.email },
+          { username: { $regex: new RegExp(`^${username}$`), $options: "i" } },
+        ],
+      },
+      (err, result) => {
+        console.log(result);
 
-//     const user = new User({
-//       name: data.name,
-//       username: data.username,
-//       email: data.email,
-//       password: data.password,
-//       birthday: data.birthday,
-//       status: status.REQUESTED,
-//     });
+        if (result) {
+          console.log(
+            "User already exist. Username: %s, Email: %s",
+            data.username,
+            data.email
+          );
 
-//     const data = null;
-//     try {
-//       data = user.save(user);
-//     } catch (e) {
-//       reject("Failed to save User");
-//     }
+          return reject("User already exist.");
+        }
 
-//     resolve(data);
-//   });
-// }
+        const user = new User({
+          name: data.name,
+          username: data.username,
+          email: data.email.toLowerCase(),
+          password: data.password,
+          birthday: data.birthday,
+          status: status.REQUESTED,
+        });
 
-// module.exports = create;
+        user.save((err, result) => {
+          if (result) {
+            return resolve(user);
+          }
+        });
+      }
+    );
+  });
+}
+
+module.exports = { create };

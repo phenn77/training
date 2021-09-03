@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
+const bycrpt = require("bcrypt");
 
-const {model, Schema} = mongoose;
+const { model, Schema } = mongoose;
 
 const userSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      // required: true,
     },
     username: {
       type: String,
@@ -15,7 +16,7 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      // required: true,
     },
     password: {
       type: String,
@@ -23,8 +24,8 @@ const userSchema = new Schema(
     },
     status: String,
     birthday: {
-      type: Date,
-      required: true,
+      type: String,
+      // required: true,
     },
     type: String,
     userReview: [
@@ -50,5 +51,11 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+// hash user password before saving into database
+userSchema.pre("save", function (next) {
+  this.password = bcrypt.hashSync(this.password, saltRounds);
+  next();
+});
 
 module.exports = model("User", userSchema);

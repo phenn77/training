@@ -1,7 +1,7 @@
 const User = require("../../model/entity/user/user");
 const status = require("../../model/enum/status");
 
-function approve(userId) {
+function block(userId) {
   return new Promise(function (resolve, reject) {
     User.findOne({ _id: userId }, (err, data) => {
       if (!data) {
@@ -10,15 +10,15 @@ function approve(userId) {
         return reject("User not found.");
       }
 
-      if (status.REQUESTED !== data.status.toUpperCase()) {
-        console.log("Cannot approve User. Status: %s", data.status);
+      if (status.DELETED === data.status.toUpperCase()) {
+        console.log("User is already deleted. Status: %s", data.status);
 
-        return reject("Cannot process User.");
+        return reject("User is already deleted.");
       }
 
-      data.status = status.APPROVED;
+      data.status = status.DELETED;
 
-      User.updateOne(result, (err, result) => {
+      User.updateOne(data, (err, result) => {
         if (result) {
           return resolve(data);
         }
@@ -28,5 +28,5 @@ function approve(userId) {
 }
 
 module.exports = {
-  approve,
+  block,
 };

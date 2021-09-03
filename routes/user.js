@@ -7,5 +7,6 @@ router.get("/:userId", userController.getUser);
 
 router.post("/create", userController.createUser);
 router.post("/approve/:userId", userController.approveUser);
+router.post("/block/:userId", userController.blockUser);
 
 module.exports = router;

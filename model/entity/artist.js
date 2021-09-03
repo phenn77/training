@@ -1,4 +1,6 @@
-import mongoose, { model, mongo, Schema } from "mongoose";
+const mongoose = require("mongoose");
+
+const { model, Schema } = mongoose;
 
 const artistSchema = new Schema(
   {
