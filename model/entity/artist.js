@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Album = require("../../model/entity/album");
 
 const { model, Schema } = mongoose;
 
@@ -10,33 +11,33 @@ const artistSchema = new Schema(
     },
     origin: {
       type: String,
-      required: true,
+      // required: true,
     },
     status: {
       type: String,
-      required: true,
+      // required: true,
     },
     summary: String,
     rating: Number,
     website: String,
-    album: [
+    albums: [
       {
         type: Schema.Types.ObjectId,
         ref: "Album",
       },
     ],
-    member: [
+    members: [
       {
         type: Schema.Types.ObjectId,
         ref: "Member",
       },
     ],
-    picture: {
+    pictures: {
       type: Schema.Types.ObjectId,
       ref: "Picture",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
 
 module.exports = model("Artist", artistSchema);

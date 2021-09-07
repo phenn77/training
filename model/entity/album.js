@@ -1,6 +1,7 @@
-import mongoose, { model, Schema } from "mongoose";
+const mongoose = require("mongoose");
+const Artist = require("../../model/entity/artist");
 
-const Tracklist = require("./tracklist");
+const { model, Schema } = mongoose;
 
 const albumSchema = new Schema(
   {
@@ -10,22 +11,27 @@ const albumSchema = new Schema(
     },
     releasedDate: {
       type: String,
-      required: true,
+      // required: true,
     },
     status: String,
     rating: Number,
+    artist: {
+      type: Schema.Types.ObjectId,
+      ref: "Artist",
+      required: true,
+    },
     tracklist: [
       {
         type: Schema.Types.ObjectId,
         ref: "Tracklist",
       },
     ],
-    picture: {
+    pictures: {
       type: Schema.Types.ObjectId,
       ref: "Picture",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
 
 module.exports = model("Album", albumSchema);

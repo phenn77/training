@@ -10,12 +10,10 @@ function create(data) {
       {
         $or: [
           { email: data.email },
-          { username: { $regex: new RegExp(`^${username}$`), $options: "i" } },
+          { username: { $regex: new RegExp(`^${username}$`, "i") } },
         ],
       },
       (err, result) => {
-        console.log(result);
-
         if (result) {
           console.log(
             "User already exist. Username: %s, Email: %s",
@@ -23,22 +21,31 @@ function create(data) {
             data.email
           );
 
-          return reject("User already exist.");
+          reject("User already exist. User ID: " + result._id);
         }
 
         const user = new User({
           name: data.name,
           username: data.username,
-          email: data.email.toLowerCase(),
           password: data.password,
           birthday: data.birthday,
           status: status.REQUESTED,
         });
 
-        user.save((err, result) => {
-          if (result) {
-            return resolve(user);
+        if (data.email != null) {
+          user.email = data.email.toLowerCase();
+        }
+
+        user.save((error, resp) => {
+          if (err) {
+            reject(error.message);
           }
+
+          if (resp) {
+            resolve(resp);
+          }
+
+          resolve(null);
         });
       }
     );

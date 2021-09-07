@@ -3,7 +3,7 @@ const router = express.Router();
 
 const artistController = require("../controller/artist");
 
-// router.get("/:userId", userController.getUser);
+router.get("/:artistId", artistController.getArtist);
 
 router.post("/create", artistController.createArtist);
 // router.post("/approve/:userId", userController.approveUser);

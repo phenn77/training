@@ -7,21 +7,27 @@ function block(userId) {
       if (!data) {
         console.log("User not found. User ID: %s", userId);
 
-        return reject("User not found.");
+        reject("User not found. User ID: " + userId);
       }
 
       if (status.DELETED === data.status.toUpperCase()) {
         console.log("User is already deleted. Status: %s", data.status);
 
-        return reject("User is already deleted.");
+        reject("User is already deleted.");
       }
 
       data.status = status.DELETED;
 
-      User.updateOne(data, (err, result) => {
-        if (result) {
-          return resolve(data);
+      User.updateOne(data, (error, result) => {
+        if (error) {
+          reject(error.message);
         }
+
+        if (result) {
+          resolve(data);
+        }
+
+        resolve(null);
       });
     });
   });

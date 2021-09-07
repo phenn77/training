@@ -6,10 +6,14 @@ function get(userId) {
       if (!result) {
         console.log("User not found. User ID: %s", userId);
 
-        return reject("User not found.");
+        reject("User not found. User ID: " + userId);
       }
 
-      return resolve(result);
+      if (result) {
+        resolve(result);
+      }
+
+      resolve(null);
     });
   });
 }
