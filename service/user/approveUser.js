@@ -16,7 +16,7 @@ function approve(userId) {
 
       data.status = status.APPROVED;
 
-      User.updateOne(result, (error, result) => {
+      User.updateOne(data, (error, result) => {
         if (error) {
           reject(error.message);
         }

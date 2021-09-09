@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
-
 const { model, Schema } = mongoose;
+
+const Artist = require("./artist");
+const Status = require("../enum/status");
 
 const memberSchema = new Schema(
   {
@@ -9,18 +11,30 @@ const memberSchema = new Schema(
       required: true,
     },
     birthday: Date,
-    status: String,
+    status: {
+      type: String,
+      enum: [Status],
+    },
     summary: String,
     position: String,
-    rating: Number,
-    picture: {
+    artist: {
       type: Schema.Types.ObjectId,
-      ref: "Picture",
+      ref: "Artist",
+      required: true,
     },
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+memberSchema.virtual("pictures", {
+  ref: "Picture",
+  localField: "_id",
+  foreignField: "by",
+  match: { currentlyUsed: true },
+});
 
 module.exports = model("Member", memberSchema);

@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const userRoute = require("./routes/user");
 const artistRoute = require("./routes/artist");
 const albumRoute = require("./routes/album");
+const memberRoute = require("./routes/member");
+const pictureRoute = require("./routes/picture");
 
 const app = express();
 
@@ -23,6 +25,8 @@ mongoose
     app.use("/user", userRoute);
     app.use("/artist", artistRoute);
     app.use("/album", albumRoute);
+    app.use("/member", memberRoute);
+    app.use("/picture", pictureRoute);
   })
   .catch((err) => {
     console.log(err);

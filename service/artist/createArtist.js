@@ -25,7 +25,12 @@ function create(data) {
           }
 
           if (resp) {
-            resolve(resp);
+            const response = resp.toObject();
+
+            delete response.__v;
+            delete response._id;
+
+            resolve(response);
           }
 
           resolve(null);

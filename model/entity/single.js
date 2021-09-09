@@ -1,16 +1,21 @@
 const mongoose = require("mongoose");
 const { model, Schema } = mongoose;
 
-const Album = require("./album");
+const Artist = require("./artist");
 
-const tracklistSchema = new Schema(
+const singleSchema = new Schema(
   {
     name: {
       type: String,
+      required: true,
+    },
+    artist: {
+      type: Schema.Types.ObjectId,
+      ref: "Artist",
       required: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-module.exports = model("Tracklist", tracklistSchema);
+model.exports = model("Single", singleSchema);

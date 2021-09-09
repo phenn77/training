@@ -1,5 +1,6 @@
 const createAlbumService = require("../service/album/createAlbum");
 const getAlbumService = require("../service/album/getAlbum");
+const getAllService = require("../service/album/getAll");
 
 const message = require("../lib/message");
 
@@ -27,4 +28,16 @@ getAlbum = async (req, res) => {
   return message.success(res, data);
 };
 
-module.exports = { createAlbum, getAlbum };
+getAll = async (req, res) => {
+  let data;
+
+  try {
+    data = await getAllService.getAll();
+  } catch (e) {
+    return message.error(res, e);
+  }
+
+  return message.success(res, data);
+};
+
+module.exports = { createAlbum, getAlbum, getAll };

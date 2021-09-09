@@ -11,10 +11,14 @@ function create(data) {
       return reject(err);
     }
 
-    Album.findOne(
-      { name: { $regex: new RegExp(`^${data.name}$`, "i") } },
-      (err, result) => {
-        console.log(result);
+    Album.findOne({
+      $and: [
+        { name: { $regex: new RegExp(`^${data.name}$`, "i") } },
+        { artist: artistData.id },
+      ],
+    })
+      .populate("artist")
+      .exec((err, result) => {
         if (result) {
           console.log(
             "Album already exist. Name: %s by %s",
@@ -27,7 +31,9 @@ function create(data) {
 
         const album = new Album({
           name: data.name,
+          releaseYear: data.releaseYear,
           artist: artistData.id,
+          tracklist: data.tracklist,
         });
 
         album.save((error, resp) => {
@@ -36,13 +42,17 @@ function create(data) {
           }
 
           if (resp) {
-            resolve(resp);
+            var response = resp.toObject();
+
+            delete response.__v;
+            delete response._id;
+
+            resolve(response);
           }
 
           resolve(null);
         });
-      }
-    );
+      });
   });
 }
 

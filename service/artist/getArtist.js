@@ -1,24 +1,61 @@
 const Artist = require("../../model/entity/artist");
 
 function get(artistId) {
-  return new Promise(function (resolve, reject) {
-    // Artist.findOne({ _id: artistId }, (err, artist) => {
-    //   if (!artist) {
-    //     console.log("Artist Not Found. Artist ID: %s", artistId);
+  return new Promise(async (resolve, reject) => {
+    Artist.findOne({ _id: artistId }, { __v: 0 })
+      .populate({ path: "members", select: "name" })
+      .populate({
+        path: "albums",
+        select: "name releaseYear",
+        options: { sort: { releaseYear: -1 } },
+      })
+      .populate({ path: "singles", select: "name" })
+      .populate({
+        path: "pictures",
+        select: "url createdAt",
+        options: { sort: { createdAt: -1 } },
+      })
+      .exec((err, artist) => {
+        if (!artist) {
+          console.log("Artist not found. Artist ID: %s", artistId);
 
-    //     reject("Artist not found. Artist ID: " + artistId);
-    //   } else {
+          reject("Artist not found. Artist ID: " + artistId);
+        }
 
-    //     resolve(artist);
-    //   }
+        if (artist) {
+          var response = artist.toObject();
 
-    //   resolve(null);
-    // });
+          delete response._id;
+          delete response.__v;
 
-    Artist.findOne({ _id: artistId })
-      .populate("albums")
-      .exec(function (err, artist) {
-        resolve(artist);
+          if (response.albums.length > 0) {
+            response.albums.forEach((album) => {
+              delete album._id;
+            });
+          }
+
+          if (response.members.length > 0) {
+            response.members.forEach((member) => {
+              delete member._id;
+            });
+          }
+
+          if (response.singles.length > 0) {
+            response.singles.forEach((single) => {
+              delete single._id;
+            });
+          }
+
+          if (response.pictures.length > 0) {
+            response.pictures.forEach((image) => {
+              delete image._id;
+            });
+          }
+
+          resolve(response);
+        }
+
+        resolve(null);
       });
   });
 }

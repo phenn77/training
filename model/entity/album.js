@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Artist = require("../../model/entity/artist");
-
 const { model, Schema } = mongoose;
+
+const Artist = require("./artist");
 
 const albumSchema = new Schema(
   {
@@ -9,9 +9,9 @@ const albumSchema = new Schema(
       type: String,
       required: true,
     },
-    releasedDate: {
+    releaseYear: {
       type: String,
-      // required: true,
+      required: true,
     },
     status: String,
     rating: Number,
@@ -22,16 +22,22 @@ const albumSchema = new Schema(
     },
     tracklist: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Tracklist",
+        type: [String],
       },
     ],
-    pictures: {
-      type: Schema.Types.ObjectId,
-      ref: "Picture",
-    },
   },
-  { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+albumSchema.virtual("pictures", {
+  ref: "Picture",
+  localField: "_id",
+  foreignField: "by",
+  match: { currentlyUsed: true },
+});
+
+albumSchema.path("tracklist").validate((data) => {
+  return data != null || data.length !== 0;
+}, "Album need to have tracklist");
 
 module.exports = model("Album", albumSchema);

@@ -15,9 +15,7 @@ const videoSchema = new Schema(
     status: String,
     rating: Number,
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 module.exports = model("Video", videoSchema);
