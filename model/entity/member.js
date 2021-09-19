@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { model, Schema } = mongoose;
 
 const Artist = require("./artist");
+const Picture = require("./picture");
 const Status = require("../enum/status");
 
 const memberSchema = new Schema(
@@ -33,7 +34,7 @@ const memberSchema = new Schema(
 memberSchema.virtual("pictures", {
   ref: "Picture",
   localField: "_id",
-  foreignField: "by",
+  foreignField: "for",
   match: { currentlyUsed: true },
 });
 

@@ -4,11 +4,17 @@ const { model, Schema } = mongoose;
 const Artist = require("./artist");
 const Member = require("./member");
 const Album = require("./album");
+const Single = require("./single");
+
+const User = require("./user/user");
 
 const pictureSchema = new Schema(
   {
-    url: String,
-    by: {
+    fileDirectory: {
+      type: String,
+      required: true,
+    },
+    for: {
       type: Schema.Types.ObjectId,
       required: true,
       refPath: "onModel",
@@ -16,17 +22,9 @@ const pictureSchema = new Schema(
     onModel: {
       type: String,
       required: true,
-      enum: ["Artist", "Member", "Album"],
+      enum: ["Artist", "Member", "Album", "Single", "User"],
     },
     currentlyUsed: Boolean,
-    originalSize: {
-      data: Buffer,
-      contentType: String,
-    },
-    compressedSize: {
-      data: Buffer,
-      contentType: String,
-    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

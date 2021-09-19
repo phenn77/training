@@ -1,82 +1,87 @@
-const Artist = require("../../model/entity/artist");
+const multer = require("multer");
+
 const Picture = require("../../model/entity/picture");
 
 const getArtistService = require("../artist/getArtist");
-// const getMemberService = require("../member/getMember");
+const getMemberService = require("../member/getMember");
 const getAlbumService = require("../album/getAlbum");
 
-function add(requestBody) {
+function add(reqBody, reqFilePath) {
   return new Promise(async (resolve, reject) => {
-    if (requestBody.pictures.length === 0) {
-      console.log("No pictures.");
-      return resolve(null);
+    const parentId = reqBody.parentId;
+    const modelName = reqBody.model;
+    var currentlyUsed = true | false;
+    currentlyUsed = reqBody.currentlyUsed ? reqBody.currentlyUsed : false;
+
+    var pictExist = true | false;
+    if (currentlyUsed) {
+      Picture.findOne(
+        { $and: [{ for: parentId }, { currentlyUsed: true }] },
+        (err, result) => {
+          if (result) {
+            pictExist = true;
+          } else {
+            pictExist = false;
+          }
+        }
+      );
     }
 
-    //contain id of either Artist / Member / Album
-    let parentId = requestBody.parentId;
+    if (pictExist) {
+      return reject(modelName + " already have active picture.");
+    }
 
     let artistData;
     let memberData;
     let albumData;
 
-    let model;
+    switch (modelName) {
+      case "Artist":
+        try {
+          artistData = await getArtistService.get(parentId);
+        } catch (err) {
+          console.log(err);
+          return reject(err);
+        }
+        break;
+      case "Album":
+        try {
+          albumData = await getAlbumService.get(parentId);
+        } catch (err) {
+          console.log(err);
+          return reject(err);
+        }
+        break;
+      case "Member":
+        try {
+          memberData = await getMemberService.get(parentId);
+        } catch (err) {
+          console.log(err);
+          return reject(err);
+        }
 
-    try {
-      artistData = await getArtistService.get(parentId);
-      model = "Artist";
-    } catch (err) {
-      console.log(err);
+        break;
+      default:
+        return reject("Data not found on " + modelName + ".");
     }
 
-    if (!artistData) {
-      try {
-        memberData = await getMemberService(parentId);
-        model = "Member";
-      } catch (err) {
-        console.log(err);
+    const pictData = new Picture({
+      for: parentId,
+      onModel: modelName,
+      currentlyUsed: currentlyUsed,
+      fileDirectory: reqFilePath,
+    });
+
+    pictData.save((error, result) => {
+      if (error) {
+        reject(error.message);
       }
-    }
 
-    // if (!memberData) {
-    //   try {
-    //     albumData = await getAlbumService(parentId);
-    //   } catch (err) {
-    //     console.log("Album not found.");
-    //   }
-    // }
+      if (result) {
+        resolve(result);
+      }
 
-    // if (!albumData) {
-    //   console.log("Data not found. ID: %s", parentId);
-
-    //   return reject("Data not found. ID: " + parentId);
-    // }
-
-    requestBody.pictures.forEach((item) => {
-      const pictData = new Picture({
-        url: item.url,
-        by: parentId,
-        onModel: model,
-        currentlyUsed: false,
-      });
-
-      console.log(pictData);
-
-      pictData.save((err, result) => {
-        if (err) {
-          reject(err.message);
-        }
-
-        if (result) {
-          var response = result.toObject();
-
-          delete response._id;
-          delete response.__v;
-
-          resolve(response);
-        }
-
-        resolve(null);
-      });
+      resolve(null);
     });
   });
 }

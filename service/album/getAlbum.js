@@ -4,6 +4,7 @@ function get(albumId) {
   return new Promise((resolve, reject) => {
     Album.findOne({ _id: albumId }, { __v: 0 })
       .populate({ path: "artist", select: "name" })
+      .populate({ path: "pictures", select: "fileDirectory" })
       .exec((error, album) => {
         if (!album) {
           console.log("Album not found. Album ID: %s", albumId);
