@@ -12,7 +12,7 @@ function get(artistId) {
       .populate({ path: "singles", select: "name" })
       .populate({
         path: "pictures",
-        select: "url createdAt",
+        select: "fileDirectory",
         options: { sort: { createdAt: -1 } },
       })
       .exec((err, artist) => {

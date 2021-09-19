@@ -5,7 +5,6 @@ const pictureController = require("../controller/picture");
 
 router.get("/:parentId", pictureController.getPicture);
 
-router.post("/add", pictureController.addPicture);
-
+router.post("/add", pictureController.uploadImg, pictureController.addPicture);
 
 module.exports = router;

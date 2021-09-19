@@ -1,13 +1,28 @@
+const multer = require("multer");
+
 const addPictureService = require("../service/picture/addPicture");
 const getPictureService = require("../service/picture/getPicture");
 
 const message = require("../lib/message");
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const uploadImg = multer({ storage: storage }).single("image");
+
 addPicture = async (req, res) => {
-  let data;
+  if (!req.file) {
+    return message.error(res, "File not found.");
+  }
 
   try {
-    data = await addPictureService.add(req.body);
+    data = await addPictureService.add(req.body, req.file.path);
   } catch (err) {
     return message.error(res, err);
   }
@@ -19,7 +34,7 @@ getPicture = async (req, res) => {
   let data;
 
   try {
-    data = await getPictureService.get(req.params.id);
+    data = await getPictureService.get(req.params.parentId);
   } catch (err) {
     return message.error(res, err);
   }
@@ -27,4 +42,4 @@ getPicture = async (req, res) => {
   return message.success(res, data);
 };
 
-module.exports = { addPicture, getPicture };
+module.exports = { uploadImg, addPicture, getPicture };

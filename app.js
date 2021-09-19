@@ -1,5 +1,4 @@
 const express = require("express");
-// const bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
 
@@ -17,9 +16,9 @@ const mongoDBUrl =
 mongoose
   .connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(3000);
+    app.listen(8080);
 
-    app.use(express.urlencoded({ extended: false }));
+    app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
     app.use("/user", userRoute);
@@ -27,6 +26,8 @@ mongoose
     app.use("/album", albumRoute);
     app.use("/member", memberRoute);
     app.use("/picture", pictureRoute);
+
+    app.use("/uploads", express.static("./uploads"));
   })
   .catch((err) => {
     console.log(err);

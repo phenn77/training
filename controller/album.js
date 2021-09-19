@@ -7,6 +7,13 @@ const message = require("../lib/message");
 createAlbum = async (req, res) => {
   let data;
 
+  const requestBody = {
+    artistId: req.body.artistId,
+    name: req.body.name,
+    releaseYear: req.body.releaseYear,
+    tracklist: req.body.tracklist,
+  };
+
   try {
     data = await createAlbumService.create(req.body);
   } catch (e) {

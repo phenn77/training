@@ -49,7 +49,7 @@ artistSchema.virtual("singles", {
 artistSchema.virtual("pictures", {
   ref: "Picture",
   localField: "_id",
-  foreignField: "by",
+  foreignField: "for",
   match: { currentlyUsed: true },
 });
 
