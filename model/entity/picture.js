@@ -29,4 +29,10 @@ const pictureSchema = new Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+pictureSchema.virtual("artist", {
+  ref: "Artist",
+  localField: "for",
+  foreignField: "_id",
+});
+
 module.exports = model("Picture", pictureSchema);

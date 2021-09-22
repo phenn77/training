@@ -15,7 +15,7 @@ createAlbum = async (req, res) => {
   };
 
   try {
-    data = await createAlbumService.create(req.body);
+    data = await createAlbumService.create(requestBody);
   } catch (e) {
     return message.error(res, e);
   }

@@ -1,16 +1,21 @@
 const expect = require("chai").expect;
-const sinon = require("sinon");
+const { stub } = require("sinon");
 
 const createAlbumService = require("../../../service/album/createAlbum");
+const getArtistService = require("../../../service/artist/getArtist");
+
+const reqBody = {
+  artistId: "1111",
+};
+
+const artistData = {
+  _id: "1111",
+};
 
 describe("Create Album Test : ", () => {
-  it("Should Create Album", async () => {
-    let requestBody = {
-      artistId: "1111",
-    };
+  before(() => {});
 
-    const result = await createAlbumService.create(requestBody);
-  });
+  it("Create Success", async () => {});
 
   it("Artist Not Found", async () => {});
 
