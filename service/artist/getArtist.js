@@ -47,9 +47,11 @@ function get(artistId) {
           }
 
           if (response.pictures.length > 0) {
-            response.pictures.forEach((image) => {
-              delete image._id;
-            });
+            response.pictures = {
+              fileDirectory: response.pictures[0].fileDirectory,
+            };
+          } else {
+            response.pictures = {};
           }
 
           resolve(response);

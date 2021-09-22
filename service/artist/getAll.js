@@ -2,27 +2,34 @@ const Artist = require("../../model/entity/artist");
 
 function getAll() {
   return new Promise((resolve, reject) => {
-    Artist.find()
+    Artist.find({}, { name: 1 })
       .sort({ name: 1 })
       .populate({ path: "pictures", select: "fileDirectory" })
       .exec((err, artist) => {
-          if (artist) {
-              const result = []; 
+        if (artist) {
+          const result = [];
 
-              artist.forEach((data) => {
-                  const resp = data.toObject();
+          artist.forEach((data) => {
+            const resp = data.toObject();
 
-                  delete resp._id;
-                  delete resp.__v;
+            delete resp._id;
+            delete resp.__v;
 
-                  result.push(resp)
-              })
+            if (resp.pictures.length > 0) {
+              resp.pictures = {
+                fileDirectory: resp.pictures[0].fileDirectory,
+              };
+            } else {
+              resp.pictures = {};
+            }
 
-              resolve(result);
-          }
+            result.push(resp);
+          });
 
-          resolve(null);
+          resolve(result);
+        }
 
+        resolve([]);
       });
   });
 }

@@ -15,6 +15,14 @@ function getAll() {
                   delete resp._id;
                   delete resp.__v;
 
+                  if (resp.pictures.length > 0) {
+                    resp.pictures = {
+                      fileDirectory: resp.pictures[0].fileDirectory,
+                    };
+                  } else {
+                    resp.pictures = {};
+                  }
+
                   result.push(resp)
               })
 

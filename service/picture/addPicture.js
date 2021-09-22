@@ -10,19 +10,14 @@ function add(reqBody, reqFilePath) {
   return new Promise(async (resolve, reject) => {
     const parentId = reqBody.parentId;
     const modelName = reqBody.model;
-    var currentlyUsed = true | false;
-    currentlyUsed = reqBody.currentlyUsed ? reqBody.currentlyUsed : false;
+    var currentlyUsed = reqBody.currentlyUsed === "true";
 
-    var pictExist = true | false;
+    var pictExist = false;
     if (currentlyUsed) {
-      Picture.findOne(
+      await Picture.find(
         { $and: [{ for: parentId }, { currentlyUsed: true }] },
         (err, result) => {
-          if (result) {
-            pictExist = true;
-          } else {
-            pictExist = false;
-          }
+          pictExist = result.length > 0;
         }
       );
     }

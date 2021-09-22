@@ -21,6 +21,14 @@ function get(albumId) {
           delete data.artist.__v;
           delete data.artist._id;
 
+          if (data.pictures.length > 0) {
+            data.pictures = {
+              fileDirectory: data.pictures[0].fileDirectory,
+            };
+          } else {
+            data.pictures = {};
+          }
+
           resolve(data);
         }
 
