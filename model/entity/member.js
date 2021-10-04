@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const { model, Schema } = mongoose;
 
-const Artist = require("./artist");
-const Picture = require("./picture");
 const Status = require("../enum/status");
 
 const memberSchema = new Schema(

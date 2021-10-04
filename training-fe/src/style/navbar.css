@@ -1,0 +1,22 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  height: 100%;
+  left: 0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  height: 100%;
+  right: 0;
+}
+
+.navbar-container {
+  display: grid;
+  background-color: red;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}

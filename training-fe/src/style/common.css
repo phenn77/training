@@ -1,0 +1,65 @@
+.img-container {
+  margin: auto; /* set the image in center */
+  opacity: 1;
+}
+
+.img-container:hover {
+  opacity: 0.8;
+}
+
+.img-name {
+  visibility: hidden;
+  text-align: center;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+}
+
+.img-container:hover .img-name {
+  visibility: visible;
+}
+
+.img-thumbnail {
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.img-thumbnail:hover {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.data-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 4rem);
+  justify-content: space-evenly;
+  grid-gap: 10px;
+  padding: 30px;
+}
+
+@media (min-width: 480px) {
+  .data-container {
+    grid-template-columns: repeat(auto-fit, 10rem);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .data-container {
+    grid-template-columns: repeat(auto-fit, 8rem);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .data-container {
+    grid-template-columns: repeat(auto-fit, 12rem);
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1330px) {
+  .data-container {
+    grid-template-columns: repeat(auto-fit, 15rem);
+  }
+}

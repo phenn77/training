@@ -4,11 +4,11 @@ const getAllService = require("../service/album/getAll");
 
 const message = require("../lib/message");
 
-createAlbum = async (req, res) => {
+const createAlbum = async (req, res) => {
   let data;
 
   const requestBody = {
-    artistId: req.body.artistId,
+    artist: req.body.artist,
     name: req.body.name,
     releaseYear: req.body.releaseYear,
     tracklist: req.body.tracklist,
@@ -23,7 +23,7 @@ createAlbum = async (req, res) => {
   return message.success(res, data);
 };
 
-getAlbum = async (req, res) => {
+const getAlbum = async (req, res) => {
   let data;
 
   try {
@@ -35,11 +35,11 @@ getAlbum = async (req, res) => {
   return message.success(res, data);
 };
 
-getAll = async (req, res) => {
+const getAll = async (req, res) => {
   let data;
 
   try {
-    data = await getAllService.getAll();
+    data = await getAllService.getAll(req.query.page);
   } catch (e) {
     return message.error(res, e);
   }

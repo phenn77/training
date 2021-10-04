@@ -4,7 +4,7 @@ const getAllService = require("../service/artist/getAll");
 
 const message = require("../lib/message");
 
-createArtist = async (req, res) => {
+const createArtist = async (req, res) => {
   let data;
 
   try {
@@ -16,7 +16,7 @@ createArtist = async (req, res) => {
   return message.success(res, data);
 };
 
-getArtist = async (req, res) => {
+const getArtist = async (req, res) => {
   let data;
   try {
     data = await getArtistService.get(req.params.artistId);
@@ -27,11 +27,11 @@ getArtist = async (req, res) => {
   return message.success(res, data);
 };
 
-getAll = async (req, res) => {
+const getAll = async (req, res) => {
   let data;
 
   try {
-    data = await getAllService.getAll();
+    data = await getAllService.getAll(req.query.page);
   } catch (e) {
     return message.error(res, e);
   }

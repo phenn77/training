@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const { model, Schema } = mongoose;
 
-const Artist = require("./artist");
-const Picture = require("./picture");
-
 const singleSchema = new Schema(
   {
     name: {
@@ -30,4 +27,4 @@ singleSchema.virtual("pictures", {
   match: { currentlyUsed: true },
 });
 
-model.exports = model("Single", singleSchema);
+module.exports = model("Single", singleSchema);

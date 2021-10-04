@@ -1,14 +1,25 @@
 const Album = require("../../model/entity/album");
+const Artist = require("../../model/entity/artist");
 
-const getArtistService = require("../artist/getArtist");
+async function create(data) {
+  const retrieveData = new Promise((resolve) => {
+    Artist.findOne({ _id: data.artist }, (err, artist) => {
+      if (err) {
+        resolve(null);
+      }
 
-function create(data) {
-  return new Promise(async (resolve, reject) => {
-    let artistData;
-    try {
-      artistData = await getArtistService.get(data.artistId);
-    } catch (err) {
-      return reject(err);
+      if (artist) {
+        resolve(artist);
+      }
+
+      resolve(null);
+    });
+  });
+  const artistData = await Promise.resolve(retrieveData);
+
+  return new Promise((resolve, reject) => {
+    if (artistData === null) {
+      return reject("Artist not found.");
     }
 
     Album.findOne({

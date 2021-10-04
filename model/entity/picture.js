@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
 const { model, Schema } = mongoose;
 
-const Artist = require("./artist");
-const Member = require("./member");
-const Album = require("./album");
-const Single = require("./single");
-
-const User = require("./user/user");
-
 const pictureSchema = new Schema(
   {
     fileDirectory: {

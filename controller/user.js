@@ -5,7 +5,7 @@ const blockUserService = require("../service/user/blockUser");
 
 const message = require("../lib/message");
 
-createUser = async (req, res) => {
+const createUser = async (req, res) => {
   let data;
 
   try {
@@ -17,7 +17,7 @@ createUser = async (req, res) => {
   return message.success(res, data);
 };
 
-getUser = async (req, res) => {
+const getUser = async (req, res) => {
   let data;
 
   try {
@@ -29,7 +29,7 @@ getUser = async (req, res) => {
   return message.success(res, data);
 };
 
-approveUser = async (req, res) => {
+const approveUser = async (req, res) => {
   let data;
 
   try {
@@ -41,7 +41,7 @@ approveUser = async (req, res) => {
   return message.success(res, data);
 };
 
-blockUser = async (req, res) => {
+const blockUser = async (req, res) => {
   let data;
   
   try {

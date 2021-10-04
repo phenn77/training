@@ -3,7 +3,7 @@ const createMemberService = require("../service/member/createMember");
 
 const message = require("../lib/message");
 
-createMember = async (req, res) => {
+const createMember = async (req, res) => {
   let data;
 
   try {

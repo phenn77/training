@@ -1,21 +1,35 @@
+const Artist = require("../../model/entity/artist");
 const Member = require("../../model/entity/member");
 
-const getArtistService = require("../artist/getArtist");
+async function create(requestBody) {
+  const retrieveArtistData = new Promise((resolve) => {
+    Artist.findOne({ _id: requestBody.artistId }, (err, artist) => {
+      if (err) {
+        resolve(null);
+      }
 
-function create(requestBody) {
-  return new Promise(async (resolve, reject) => {
-    let artistData;
-    try {
-      artistData = await getArtistService.get(requestBody.artistId);
-    } catch (err) {
-      return reject(err);
-    }
+      if (artist) {
+        resolve(artist);
+      }
 
+      resolve(null);
+    });
+  });
+
+  const artistData = await Promise.resolve(retrieveArtistData);
+
+  return new Promise((resolve, reject) => {
     if (requestBody.members.length === 0) {
       return reject("No member need to be added");
     }
 
-    const memberName = requestBody.members.map((member) => new RegExp(`^${member.name}$`, "i"));
+    if (artistData === null) {
+      return reject("Artist not found.");
+    }
+
+    const memberName = requestBody.members.map(
+      (member) => new RegExp(`^${member.name}$`, "i")
+    );
 
     Member.find()
       .and([{ artist: artistData.id }, { name: { $in: memberName } }])

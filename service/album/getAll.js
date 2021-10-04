@@ -1,36 +1,59 @@
 const Album = require("../../model/entity/album");
 
-function getAll() {
-  return new Promise((resolve, reject) => {
-    Album.find()
+const { itemPerPage } = require("../../config");
+const paginationUtil = require("../../lib/paginationUtil");
+
+async function getAll(pageNum) {
+  const countData = new Promise((resolve) => {
+    Album.countDocuments({}, (err, result) => {
+      if (err) {
+        resolve(0);
+      }
+
+      resolve(result);
+    });
+  });
+  const totalData = await Promise.resolve(countData);
+
+  return new Promise((resolve) => {
+    const totalPage = paginationUtil.getTotalPage(totalData);
+    const currentPage = paginationUtil.getCurrentPage(pageNum, totalPage);
+    const offset = paginationUtil.getOffset(currentPage);
+
+    Album.find({}, {name: 1})
       .sort({ name: 1 })
+      .skip(offset)
+      .limit(itemPerPage)
       .populate({ path: "pictures", select: "fileDirectory" })
       .exec((err, artist) => {
-          if (artist) {
-              const result = []; 
+        let respBody = {
+          page: currentPage,
+          totalPage: totalPage,
+          data: [],
+        };
 
-              artist.forEach((data) => {
-                  const resp = data.toObject();
+        if (artist) {
+          artist.forEach((data) => {
+            const resp = data.toObject();
 
-                  delete resp._id;
-                  delete resp.__v;
+            delete resp._id;
+            delete resp.__v;
 
-                  if (resp.pictures.length > 0) {
-                    resp.pictures = {
-                      fileDirectory: resp.pictures[0].fileDirectory,
-                    };
-                  } else {
-                    resp.pictures = {};
-                  }
+            if (resp.pictures.length > 0) {
+              resp.pictures = {
+                fileDirectory: resp.pictures[0].fileDirectory,
+              };
+            } else {
+              resp.pictures = {};
+            }
 
-                  result.push(resp)
-              })
+            respBody.data.push(resp);
+          });
 
-              resolve(result);
-          }
+          resolve(respBody);
+        }
 
-          resolve(null);
-
+        resolve(respBody);
       });
   });
 }

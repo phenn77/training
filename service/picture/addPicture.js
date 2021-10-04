@@ -1,63 +1,72 @@
-const multer = require("multer");
-
 const Picture = require("../../model/entity/picture");
 
-const getArtistService = require("../artist/getArtist");
-const getMemberService = require("../member/getMember");
-const getAlbumService = require("../album/getAlbum");
+const Artist = require("../../model/entity/artist");
+const Album = require("../../model/entity/album");
+const Member = require("../../model/entity/member");
+const Single = require("../../model/entity/single");
 
-function add(reqBody, reqFilePath) {
-  return new Promise(async (resolve, reject) => {
-    const parentId = reqBody.parentId;
-    const modelName = reqBody.model;
-    var currentlyUsed = reqBody.currentlyUsed === "true";
+async function add(reqBody, reqFilePath) {
+  const parentId = reqBody.parentId;
+  const modelName = reqBody.model;
+  var currentlyUsed = reqBody.currentlyUsed === "true";
 
-    var pictExist = false;
-    if (currentlyUsed) {
-      await Picture.find(
+  let pictExist = false;
+  if (currentlyUsed) {
+    const pictData = new Promise((resolve) => {
+      Picture.countDocuments(
         { $and: [{ for: parentId }, { currentlyUsed: true }] },
         (err, result) => {
+          if (err) {
+            resolve(0);
+          }
+
+          if (result) {
+            resolve(result);
+          }
+
+          resolve(0);
           pictExist = result.length > 0;
         }
       );
-    }
+    });
 
+    const pict = await Promise.resolve(pictData);
+
+    pictExist = pict > 0;
+  }
+
+  let dataFound = false;
+  switch (modelName) {
+    case "Artist":
+      var artistData = getArtist(parentId);
+      dataFound = await Promise.resolve(artistData);
+
+      break;
+    case "Album":
+      var albumData = getAlbum(parentId);
+      dataFound = await Promise.resolve(albumData);
+
+      break;
+    case "Member":
+      var memberData = getMember(parentId);
+      dataFound = await Promise.resolve(memberData);
+
+      break;
+    case "Single":
+      var singleData = getSingle(parentId);
+      dataFound = await Promise.resolve(singleData);
+
+      break;
+    default:
+  }
+
+  return new Promise((resolve, reject) => {
     if (pictExist) {
       return reject(modelName + " already have active picture.");
     }
 
-    let artistData;
-    let memberData;
-    let albumData;
-
-    switch (modelName) {
-      case "Artist":
-        try {
-          artistData = await getArtistService.get(parentId);
-        } catch (err) {
-          console.log(err);
-          return reject(err);
-        }
-        break;
-      case "Album":
-        try {
-          albumData = await getAlbumService.get(parentId);
-        } catch (err) {
-          console.log(err);
-          return reject(err);
-        }
-        break;
-      case "Member":
-        try {
-          memberData = await getMemberService.get(parentId);
-        } catch (err) {
-          console.log(err);
-          return reject(err);
-        }
-
-        break;
-      default:
-        return reject("Data not found on " + modelName + ".");
+    if (!dataFound) {
+      return reject("Data not found on " + modelName + ".");
     }
 
     const pictData = new Picture({
@@ -77,6 +86,70 @@ function add(reqBody, reqFilePath) {
       }
 
       resolve(null);
+    });
+  });
+}
+
+function getArtist(parentId) {
+  return new Promise((resolve) => {
+    Artist.findOne({ _id: parentId }, (err, result) => {
+      if (err) {
+        resolve(false);
+      }
+
+      if (result) {
+        resolve(true);
+      }
+
+      resolve(false);
+    });
+  });
+}
+
+function getAlbum(parentId) {
+  return new Promise((resolve) => {
+    Album.findOne({ _id: parentId }, (err, result) => {
+      if (err) {
+        resolve(false);
+      }
+
+      if (result) {
+        resolve(true);
+      }
+
+      resolve(false);
+    });
+  });
+}
+
+function getMember(parentId) {
+  return new Promise((resolve) => {
+    Member.findOne({ _id: parentId }, (err, result) => {
+      if (err) {
+        resolve(false);
+      }
+
+      if (result) {
+        resolve(true);
+      }
+
+      resolve(false);
+    });
+  });
+}
+
+function getSingle(parentId) {
+  return new Promise((resolve) => {
+    Single.findOne({ _id: parentId }, (err, result) => {
+      if (err) {
+        resolve(false);
+      }
+
+      if (result) {
+        resolve(true);
+      }
+
+      resolve(false);
     });
   });
 }

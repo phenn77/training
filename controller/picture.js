@@ -16,10 +16,12 @@ const storage = multer.diskStorage({
 
 const uploadImg = multer({ storage: storage }).single("image");
 
-addPicture = async (req, res) => {
+const addPicture = async (req, res) => {
   if (!req.file) {
     return message.error(res, "File not found.");
   }
+
+  let data;
 
   try {
     data = await addPictureService.add(req.body, req.file.path);
@@ -30,7 +32,7 @@ addPicture = async (req, res) => {
   return message.success(res, data);
 };
 
-getPicture = async (req, res) => {
+const getPicture = async (req, res) => {
   let data;
 
   try {
