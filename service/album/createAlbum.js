@@ -3,16 +3,12 @@ const Artist = require("../../model/entity/artist");
 
 async function create(data) {
   const retrieveData = new Promise((resolve) => {
-    Artist.findOne({ _id: data.artist }, (err, artist) => {
+    Artist.findById({ _id: data.artist }, (err, artist) => {
       if (err) {
-        resolve(null);
+        return resolve(null);
       }
 
-      if (artist) {
-        resolve(artist);
-      }
-
-      resolve(null);
+      return resolve(artist);
     });
   });
   const artistData = await Promise.resolve(retrieveData);
@@ -31,11 +27,11 @@ async function create(data) {
       .populate("artist")
       .exec((err, result) => {
         if (result) {
-          console.log(
-            "Album already exist. Name: %s by %s",
-            result.name,
-            result.artist.name
-          );
+          // console.log(
+          //   "Album already exist. Name: %s by %s",
+          //   result.name,
+          //   result.artist.name
+          // );
 
           return reject("Album already exist.");
         }
@@ -46,22 +42,20 @@ async function create(data) {
           artist: artistData.id,
           tracklist: data.tracklist,
         });
-
+        
         album.save((error, resp) => {
-          if (error) {
-            reject(error.message);
-          }
+          var response = {
+            id: resp.id,
+            name: resp.name,
+            releaseYear: resp.releaseYear,
+            tracklist: resp.tracklist,
+            artist: {
+              id: artistData.id,
+              name: artistData.name,
+            },
+          };
 
-          if (resp) {
-            var response = resp.toObject();
-
-            delete response.__v;
-            delete response._id;
-
-            resolve(response);
-          }
-
-          resolve(null);
+          return resolve(response);
         });
       });
   });

@@ -30,27 +30,28 @@ async function getAll(pageNum) {
       return resolve(respBody);
     }
 
-    Album.find({}, { name: 1 })
+    Album.find({}, { name: 1, releaseYear: 1 })
       .sort({ name: 1 })
       .skip(offset)
       .limit(itemPerPage)
       .populate({ path: "pictures", select: "fileDirectory" })
       .exec((err, album) => {
         album.forEach((data) => {
-          const resp = data.toObject();
-
-          delete resp._id;
-          delete resp.__v;
-
-          if (resp.pictures.length > 0) {
-            resp.pictures = {
-              fileDirectory: resp.pictures[0].fileDirectory,
-            };
-          } else {
-            resp.pictures = {};
+          let alb = {
+            id: data.id,
+            name: data.name,
+            releaseYear: data.releaseYear,
           }
 
-          respBody.data.push(resp);
+          if (data.pictures.length > 0) {
+            alb.pictures = {
+              fileDirectory: data.pictures[0].fileDirectory,
+            };
+          } else {
+            alb.pictures = {};
+          }
+
+          respBody.data.push(alb);
         });
 
         return resolve(respBody);
