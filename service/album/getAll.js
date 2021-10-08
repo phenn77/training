@@ -7,10 +7,10 @@ async function getAll(pageNum) {
   const countData = new Promise((resolve) => {
     Album.countDocuments({}, (err, result) => {
       if (err) {
-        resolve(0);
+        return resolve(0);
       }
 
-      resolve(result);
+      return resolve(result);
     });
   });
   const totalData = await Promise.resolve(countData);
@@ -20,40 +20,40 @@ async function getAll(pageNum) {
     const currentPage = paginationUtil.getCurrentPage(pageNum, totalPage);
     const offset = paginationUtil.getOffset(currentPage);
 
-    Album.find({}, {name: 1})
+    let respBody = {
+      page: currentPage,
+      totalPage: totalPage,
+      data: [],
+    };
+
+    if (totalData === 0) {
+      return resolve(respBody);
+    }
+
+    Album.find({}, { name: 1 })
       .sort({ name: 1 })
       .skip(offset)
       .limit(itemPerPage)
       .populate({ path: "pictures", select: "fileDirectory" })
-      .exec((err, artist) => {
-        let respBody = {
-          page: currentPage,
-          totalPage: totalPage,
-          data: [],
-        };
+      .exec((err, album) => {
+        album.forEach((data) => {
+          const resp = data.toObject();
 
-        if (artist) {
-          artist.forEach((data) => {
-            const resp = data.toObject();
+          delete resp._id;
+          delete resp.__v;
 
-            delete resp._id;
-            delete resp.__v;
+          if (resp.pictures.length > 0) {
+            resp.pictures = {
+              fileDirectory: resp.pictures[0].fileDirectory,
+            };
+          } else {
+            resp.pictures = {};
+          }
 
-            if (resp.pictures.length > 0) {
-              resp.pictures = {
-                fileDirectory: resp.pictures[0].fileDirectory,
-              };
-            } else {
-              resp.pictures = {};
-            }
+          respBody.data.push(resp);
+        });
 
-            respBody.data.push(resp);
-          });
-
-          resolve(respBody);
-        }
-
-        resolve(respBody);
+        return resolve(respBody);
       });
   });
 }

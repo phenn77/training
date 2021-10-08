@@ -1,8 +1,10 @@
 const expect = require("chai").expect;
-const { stub } = require("sinon");
+const sinon = require("sinon");
 
-const createAlbumService = require("../../../service/album/createAlbum");
-const getArtistService = require("../../../service/artist/getArtist");
+const sandbox = sinon.createSandbox();
+
+const createAlbumSrv = require("../../../service/album/createAlbum");
+
 
 const reqBody = {
   artistId: "1111",

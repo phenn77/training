@@ -13,7 +13,7 @@ const app = express();
 const mongoDBUrl =
   "mongodb+srv://admin:admin@training.sw7hp.mongodb.net/training?retryWrites=true&w=majority";
 
-mongoose.set("debug", true);
+// mongoose.set("debug", true);
 
 mongoose
   .connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
