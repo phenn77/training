@@ -37,7 +37,7 @@ describe("Create Album Test", () => {
     albumStub.restore();
   });
 
-  it("Create Success", () => {
+  it("Success", () => {
     artistStub = sinon.stub(Artist, "findById").yields(null, artist);
 
     albumStub = sinon.stub(Album, "findOne").returns({
@@ -54,7 +54,7 @@ describe("Create Album Test", () => {
     });
   });
 
-  it("Artist Not Found", () => {
+  it("Album's artist not found", () => {
     artistStub = sinon.stub(Artist, "findById").yields("Error");
 
     return createAlbumSrv.create(payload).then(noop, (data) => {

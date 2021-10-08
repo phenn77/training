@@ -20,7 +20,7 @@ describe("Get Album By ID Test", function () {
     dbStub.restore();
   });
 
-  it("Return an album with empty picture", () => {
+  it("Return with empty picture", () => {
     dbStub = sinon.stub(Album, "findById").returns({
       populate: sinon.stub().returns({
         populate: sinon.stub().returns({
@@ -41,7 +41,7 @@ describe("Get Album By ID Test", function () {
     });
   });
 
-  it("Return an album with a picture", () => {
+  it("Return with a picture", () => {
     dbStub = sinon.stub(Album, "findById").returns({
       populate: sinon.stub().returns({
         populate: sinon.stub().returns({
