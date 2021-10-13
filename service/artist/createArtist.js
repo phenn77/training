@@ -6,7 +6,7 @@ function create(data) {
       { name: { $regex: new RegExp(`^${data.name}$`, "i") } },
       (err, result) => {
         if (result) {
-          console.log("Artist already exist. Name: %s", data.name);
+          // console.log("Artist already exist. Name: %s", data.name);
 
           return reject("Artist already exist.");
         }
@@ -20,20 +20,14 @@ function create(data) {
         });
 
         artist.save((error, resp) => {
-          if (error) {
-            reject(error.message);
-          }
-
-          if (resp) {
-            const response = resp.toObject();
-
-            delete response.__v;
-            delete response._id;
-
-            resolve(response);
-          }
-
-          resolve(null);
+          return resolve({
+            id: resp.id,
+            name: resp.name,
+            origin: resp.origin,
+            status: resp.status,
+            summary: resp.summary,
+            website: resp.website,
+          });
         });
       }
     );

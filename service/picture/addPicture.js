@@ -16,16 +16,11 @@ async function add(reqBody, reqFilePath) {
       Picture.countDocuments(
         { $and: [{ for: parentId }, { currentlyUsed: true }] },
         (err, result) => {
-          if (err) {
-            resolve(0);
-          }
-
           if (result) {
             resolve(result);
+          } else {
+            resolve(0);
           }
-
-          resolve(0);
-          pictExist = result.length > 0;
         }
       );
     });
@@ -77,79 +72,63 @@ async function add(reqBody, reqFilePath) {
     });
 
     pictData.save((error, result) => {
-      if (error) {
-        reject(error.message);
-      }
-
       if (result) {
-        resolve(result);
+        return resolve(pictData);
+      } else {
+        return reject("Error");
       }
-
-      resolve(null);
     });
   });
 }
 
 function getArtist(parentId) {
   return new Promise((resolve) => {
-    Artist.findOne({ _id: parentId }, (err, result) => {
-      if (err) {
-        resolve(false);
-      }
-
+    Artist.findById(parentId, (err, result) => {
+      let resp = false;
       if (result) {
-        resolve(true);
+        resp = true;
       }
 
-      resolve(false);
+      return resolve(resp);
     });
   });
 }
 
 function getAlbum(parentId) {
   return new Promise((resolve) => {
-    Album.findOne({ _id: parentId }, (err, result) => {
-      if (err) {
-        resolve(false);
-      }
-
+    Album.findById(parentId, (err, result) => {
+      let resp = false;
       if (result) {
-        resolve(true);
+        resp = true;
       }
 
-      resolve(false);
+      return resolve(resp);
     });
   });
 }
 
 function getMember(parentId) {
   return new Promise((resolve) => {
-    Member.findOne({ _id: parentId }, (err, result) => {
-      if (err) {
-        resolve(false);
-      }
-
+    Member.findById(parentId, (err, result) => {
+      let resp = false;
       if (result) {
-        resolve(true);
+        resp = true;
       }
 
-      resolve(false);
+      return resolve(resp);
     });
   });
 }
 
 function getSingle(parentId) {
   return new Promise((resolve) => {
-    Single.findOne({ _id: parentId }, (err, result) => {
-      if (err) {
-        resolve(false);
-      }
-
+    Single.findById(parentId, (err, result) => {
+      let resp = false;
       if (result) {
-        resolve(true);
+        resp = true;
       }
 
-      resolve(false);
+      return resolve(resp);
     });
   });
 }

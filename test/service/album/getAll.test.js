@@ -6,11 +6,7 @@ const Album = require("../../../model/entity/album");
 const getAllSrv = require("../../../service/album/getAll");
 
 describe("Get All Album Test", () => {
-  let dbStub, noop;
-
-  before(() => {
-    noop = () => {};
-  });
+  let dbStub;
 
   afterEach(() => {
     dbStub.restore();

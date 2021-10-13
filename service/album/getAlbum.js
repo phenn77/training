@@ -2,7 +2,7 @@ const Album = require("../../model/entity/album");
 
 function get(albumId) {
   return new Promise((resolve, reject) => {
-    Album.findById({ _id: albumId }, { __v: 0 })
+    Album.findById(albumId)
       .populate({ path: "artist", select: "name" })
       .populate({ path: "pictures", select: "fileDirectory" })
       .exec((error, album) => {

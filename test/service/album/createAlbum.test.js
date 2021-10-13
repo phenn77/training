@@ -28,7 +28,7 @@ describe("Create Album Test", () => {
     album = {
       id: faker.datatype.uuid,
       name: faker.name.findName(),
-      releaseYear: "2020"
+      releaseYear: "2020",
     };
   });
 
@@ -38,7 +38,9 @@ describe("Create Album Test", () => {
   });
 
   it("Success", () => {
-    artistStub = sinon.stub(Artist, "findById").yields(null, artist);
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields(null, artist),
+    });
 
     albumStub = sinon.stub(Album, "findOne").returns({
       populate: sinon.stub().returns({
@@ -55,7 +57,9 @@ describe("Create Album Test", () => {
   });
 
   it("Album's artist not found", () => {
-    artistStub = sinon.stub(Artist, "findById").yields("Error");
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields("Error"),
+    });
 
     return createAlbumSrv.create(payload).then(noop, (data) => {
       expect(data).to.be.equal("Artist not found.");
@@ -63,7 +67,9 @@ describe("Create Album Test", () => {
   });
 
   it("Album already exist", () => {
-    artistStub = sinon.stub(Artist, "findById").yields(null, artist);
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields(null, artist),
+    });
 
     albumStub = sinon.stub(Album, "findOne").returns({
       populate: sinon.stub().returns({

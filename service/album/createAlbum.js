@@ -3,7 +3,7 @@ const Artist = require("../../model/entity/artist");
 
 async function create(data) {
   const retrieveData = new Promise((resolve) => {
-    Artist.findById({ _id: data.artist }, (err, artist) => {
+    Artist.findById(data.artist).exec((err, artist) => {
       if (err) {
         return resolve(null);
       }
@@ -42,7 +42,7 @@ async function create(data) {
           artist: artistData.id,
           tracklist: data.tracklist,
         });
-        
+
         album.save((error, resp) => {
           var response = {
             id: resp.id,
