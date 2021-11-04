@@ -17,7 +17,7 @@ describe("Create Album Test", () => {
   beforeEach(() => {
     payload = {
       name: faker.name.findName(),
-      artist: faker.datatype.uuid,
+      artist: faker.datatype.uuid
     };
 
     artist = {
