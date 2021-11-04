@@ -1,23 +1,84 @@
 const expect = require("chai").expect;
-const { stub } = require("sinon");
+const sinon = require("sinon");
+const faker = require("faker");
 
-const createAlbumService = require("../../../service/album/createAlbum");
-const getArtistService = require("../../../service/artist/getArtist");
+const Artist = require("../../../model/entity/artist");
+const Album = require("../../../model/entity/album");
 
-const reqBody = {
-  artistId: "1111",
-};
+const createAlbumSrv = require("../../../service/album/createAlbum");
 
-const artistData = {
-  _id: "1111",
-};
+describe("Create Album Test", () => {
+  let artistStub, albumStub, noop, payload, artist, album;
 
-describe("Create Album Test : ", () => {
-  before(() => {});
+  before(() => {
+    noop = () => {};
+  });
 
-  it("Create Success", async () => {});
+  beforeEach(() => {
+    payload = {
+      name: faker.name.findName(),
+      artist: faker.datatype.uuid
+    };
 
-  it("Artist Not Found", async () => {});
+    artist = {
+      id: faker.datatype.uuid,
+      name: faker.name.findName(),
+    };
 
-  it("Album already exist", async () => {});
+    album = {
+      id: faker.datatype.uuid,
+      name: faker.name.findName(),
+      releaseYear: "2020",
+    };
+  });
+
+  afterEach(() => {
+    artistStub.restore();
+    albumStub.restore();
+  });
+
+  it("Success", () => {
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields(null, artist),
+    });
+
+    albumStub = sinon.stub(Album, "findOne").returns({
+      populate: sinon.stub().returns({
+        exec: sinon.stub().yields(null),
+      }),
+    });
+
+    sinon.stub(Album.prototype, "save").yields(null, album);
+
+    return createAlbumSrv.create(payload).then((data) => {
+      expect(data.name).to.be.equal(album.name);
+      expect(data.releaseYear).to.be.equal(album.releaseYear);
+    });
+  });
+
+  it("Album's artist not found", () => {
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields("Error"),
+    });
+
+    return createAlbumSrv.create(payload).then(noop, (data) => {
+      expect(data).to.be.equal("Artist not found.");
+    });
+  });
+
+  it("Album already exist", () => {
+    artistStub = sinon.stub(Artist, "findById").returns({
+      exec: sinon.stub().yields(null, artist),
+    });
+
+    albumStub = sinon.stub(Album, "findOne").returns({
+      populate: sinon.stub().returns({
+        exec: sinon.stub().yields(null, album),
+      }),
+    });
+
+    return createAlbumSrv.create(payload).then(noop, (data) => {
+      expect(data).to.be.equal("Album already exist.");
+    });
+  });
 });

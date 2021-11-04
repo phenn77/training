@@ -7,10 +7,10 @@ async function getAll(pageNum) {
   const countData = new Promise((resolve) => {
     Album.countDocuments({}, (err, result) => {
       if (err) {
-        resolve(0);
+        return resolve(0);
       }
 
-      resolve(result);
+      return resolve(result);
     });
   });
   const totalData = await Promise.resolve(countData);
@@ -20,40 +20,41 @@ async function getAll(pageNum) {
     const currentPage = paginationUtil.getCurrentPage(pageNum, totalPage);
     const offset = paginationUtil.getOffset(currentPage);
 
-    Album.find({}, {name: 1})
+    let respBody = {
+      page: currentPage,
+      totalPage: totalPage,
+      data: [],
+    };
+
+    if (totalData === 0) {
+      return resolve(respBody);
+    }
+
+    Album.find({}, { name: 1, releaseYear: 1 })
       .sort({ name: 1 })
       .skip(offset)
       .limit(itemPerPage)
       .populate({ path: "pictures", select: "fileDirectory" })
-      .exec((err, artist) => {
-        let respBody = {
-          page: currentPage,
-          totalPage: totalPage,
-          data: [],
-        };
+      .exec((err, album) => {
+        album.forEach((data) => {
+          let alb = {
+            id: data.id,
+            name: data.name,
+            releaseYear: data.releaseYear,
+          }
 
-        if (artist) {
-          artist.forEach((data) => {
-            const resp = data.toObject();
+          if (data.pictures.length > 0) {
+            alb.pictures = {
+              fileDirectory: data.pictures[0].fileDirectory,
+            };
+          } else {
+            alb.pictures = {};
+          }
 
-            delete resp._id;
-            delete resp.__v;
+          respBody.data.push(alb);
+        });
 
-            if (resp.pictures.length > 0) {
-              resp.pictures = {
-                fileDirectory: resp.pictures[0].fileDirectory,
-              };
-            } else {
-              resp.pictures = {};
-            }
-
-            respBody.data.push(resp);
-          });
-
-          resolve(respBody);
-        }
-
-        resolve(respBody);
+        return resolve(respBody);
       });
   });
 }

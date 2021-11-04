@@ -28,4 +28,22 @@ pictureSchema.virtual("artist", {
   foreignField: "_id",
 });
 
+pictureSchema.virtual("member", {
+  ref: "Member",
+  localField: "for",
+  foreignField: "_id",
+});
+
+pictureSchema.virtual("album", {
+  ref: "Album",
+  localField: "for",
+  foreignField: "_id",
+});
+
+pictureSchema.virtual("single", {
+  ref: "Single",
+  localField: "for",
+  foreignField: "_id",
+});
+
 module.exports = model("Picture", pictureSchema);

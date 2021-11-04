@@ -5,29 +5,24 @@ function get(parentId) {
     Picture.find({ for: parentId })
       .sort({ currentlyUsed: -1 }) //sort by true, comes first
       .limit(30)
-      .populate({ path: "artist" })
       .exec((err, picture) => {
-        if (err) {
-          resolve([]);
-        }
+        var response = {
+          data: [],
+        };
 
-        let pictData = [];
         if (picture.length > 0) {
           picture.forEach((pict) => {
             const dt = {
-              fileDirectory: pict.fileDirectory,
-              name: pict.artist[0].name,
               id: pict.id,
+              fileDirectory: pict.fileDirectory,
               currentlyUsed: pict.currentlyUsed,
             };
 
-            pictData.push(dt);
+            response.data.push(dt);
           });
 
-          resolve(pictData);
+          return resolve(response);
         }
-
-        resolve([]);
       });
   });
 }
