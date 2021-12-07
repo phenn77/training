@@ -6,56 +6,56 @@ const blockUserService = require("../service/user/blockUser");
 const message = require("../lib/message");
 
 const createUser = async (req, res) => {
-  let data;
+    let data;
 
-  try {
-    data = await createUserService.create(req.body);
-  } catch (e) {
-    return message.error(res, e);
-  }
+    try {
+        data = await createUserService.create(req.body);
+    } catch (e) {
+        return message.error(res, e);
+    }
 
-  return message.success(res, data);
+    return message.success(res, data);
 };
 
 const getUser = async (req, res) => {
-  let data;
+    let data;
 
-  try {
-    data = await getUserService.get(req.params.userId);
-  } catch (e) {
-    return message.error(res, e);
-  }
+    try {
+        data = await getUserService.get(req.params.userId);
+    } catch (e) {
+        return message.error(res, e);
+    }
 
-  return message.success(res, data);
+    return message.success(res, data);
 };
 
 const approveUser = async (req, res) => {
-  let data;
+    let data;
 
-  try {
-    data = await approveUserService.approve(req.params.userId);
-  } catch (e) {
-    return message.error(res, e);
-  }
+    try {
+        data = await approveUserService.approve(req.params.userId);
+    } catch (e) {
+        return message.error(res, e);
+    }
 
-  return message.success(res, data);
+    return message.success(res, data);
 };
 
 const blockUser = async (req, res) => {
-  let data;
-  
-  try {
-    data = await blockUserService.block(req.params.userId);
-  } catch (e) {
-    return message.error(res, e);
-  }
+    let data;
 
-  return message.success(res, data);
+    try {
+        data = await blockUserService.block(req.params.userId);
+    } catch (e) {
+        return message.error(res, e);
+    }
+
+    return message.success(res, data);
 };
 
 module.exports = {
-  createUser,
-  getUser,
-  approveUser,
-  blockUser,
+    createUser,
+    getUser,
+    approveUser,
+    blockUser,
 };

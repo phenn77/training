@@ -1,21 +1,21 @@
-import mongoose, { model, Schema } from "mongoose";
+import mongoose, {model, Schema} from "mongoose";
 
 const userVoteSchema = new Schema(
-  {
-    artist: {
-      type: Schema.Types.ObjectId,
-      ref: "Artist",
+    {
+        artist: {
+            type: Schema.Types.ObjectId,
+            ref: "Artist",
+        },
+        picture: {
+            type: Schema.Types.ObjectId,
+            ref: "Picture",
+        },
+        campaign: {
+            type: Schema.Types.ObjectId,
+            ref: "Vote",
+        },
     },
-    picture: {
-      type: Schema.Types.ObjectId,
-      ref: "Picture",
-    },
-    campaign: {
-      type: Schema.Types.ObjectId,
-      ref: "Vote",
-    },
-  },
-  { timestamps: true }
+    {timestamps: true}
 );
 
 module.exports = model("UserVote", userVoteSchema);

@@ -11,35 +11,36 @@ const pictureRoute = require("./routes/picture");
 const app = express();
 
 const mongoDBUrl =
-  "mongodb+srv://admin:admin@training.sw7hp.mongodb.net/training?retryWrites=true&w=majority";
+    "mongodb+srv://admin:admin@training.sw7hp.mongodb.net/training?retryWrites=true&w=majority";
 
-// mongoose.set("debug", true);
+mongoose.set("debug", true);
 
 mongoose
-  .connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    app.listen(8080);
+    .connect(mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 1000,})
+    .then(() => {
+        console.log("Connected to DB.")
+        app.listen(8080);
 
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
+        app.use(express.urlencoded({extended: true}));
+        app.use(express.json());
 
-    app.use(function (req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-      );
-      next();
+        app.use(function (req, res, next) {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header(
+                "Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept"
+            );
+            next();
+        });
+
+        app.use("/user", userRoute);
+        app.use("/artist", artistRoute);
+        app.use("/album", albumRoute);
+        app.use("/member", memberRoute);
+        app.use("/picture", pictureRoute);
+
+        app.use("/uploads", express.static("./uploads"));
+    })
+    .catch((err) => {
+        console.log(err);
     });
-
-    app.use("/user", userRoute);
-    app.use("/artist", artistRoute);
-    app.use("/album", albumRoute);
-    app.use("/member", memberRoute);
-    app.use("/picture", pictureRoute);
-
-    app.use("/uploads", express.static("./uploads"));
-  })
-  .catch((err) => {
-    console.log(err);
-  });

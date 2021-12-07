@@ -2,63 +2,67 @@ const Album = require("../../model/entity/album");
 const Artist = require("../../model/entity/artist");
 
 async function create(data) {
-  const retrieveData = new Promise((resolve) => {
-    Artist.findById(data.artist).exec((err, artist) => {
-      if (err) {
-        return resolve(null);
-      }
+    const retrieveData = new Promise((resolve) => {
+        Artist.findById(data.artist).exec((err, artist) => {
+            if (err) {
+                return resolve(null);
+            }
 
-      return resolve(artist);
+            return resolve(artist);
+        });
     });
-  });
-  const artistData = await Promise.resolve(retrieveData);
+    const artistData = await Promise.resolve(retrieveData);
 
-  return new Promise((resolve, reject) => {
-    if (artistData === null) {
-      return reject("Artist not found.");
-    }
-
-    Album.findOne({
-      $and: [
-        { name: { $regex: new RegExp(`^${data.name}$`, "i") } },
-        { artist: artistData.id },
-      ],
-    })
-      .populate("artist")
-      .exec((err, result) => {
-        if (result) {
-          // console.log(
-          //   "Album already exist. Name: %s by %s",
-          //   result.name,
-          //   result.artist.name
-          // );
-
-          return reject("Album already exist.");
+    return new Promise((resolve, reject) => {
+        if (artistData === null) {
+            return reject("Artist not found.");
         }
 
-        const album = new Album({
-          name: data.name,
-          releaseYear: data.releaseYear,
-          artist: artistData.id,
-          tracklist: data.tracklist,
-        });
+        Album.findOne({
+            $and: [
+                {name: {$regex: new RegExp(`^${data.name}$`, "i")}},
+                {artist: artistData.id},
+            ],
+        })
+            .populate("artist")
+            .exec((err, result) => {
+                if (result) {
+                    // console.log(
+                    //   "Album already exist. Name: %s by %s",
+                    //   result.name,
+                    //   result.artist.name
+                    // );
 
-        album.save((error, resp) => {
-          var response = {
-            id: resp.id,
-            name: resp.name,
-            releaseYear: resp.releaseYear,
-            tracklist: resp.tracklist,
-            artist: {
-              id: artistData.id,
-              name: artistData.name,
-            },
-          };
+                    return reject("Album already exist.");
+                }
 
-          return resolve(response);
-        });
-      });
-  });
+                const album = new Album({
+                    name: data.name,
+                    releaseYear: data.releaseYear,
+                    artist: artistData.id,
+                    tracklist: data.tracklist,
+                });
+
+                album.save((error, resp) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    var response = {
+                        id: resp.id,
+                        name: resp.name,
+                        releaseYear: resp.releaseYear,
+                        tracklist: resp.tracklist,
+                        artist: {
+                            id: artistData.id,
+                            name: artistData.name,
+                        },
+                    };
+
+                    return resolve(response);
+                });
+            });
+    });
 }
 
-module.exports = { create };
+module.exports = {create};

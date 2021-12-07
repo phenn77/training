@@ -1,51 +1,52 @@
 const mongoose = require("mongoose");
-const { model, Schema } = mongoose;
+const {model, Schema} = mongoose;
 
 const artistSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
+    {
+        name: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        alias: String,
+        origin: {
+            type: String,
+            required: true,
+        },
+        status: {
+            type: String,
+            required: true,
+        },
+        summary: String,
+        rating: Number,
+        website: String,
     },
-    origin: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
-    },
-    summary: String,
-    rating: Number,
-    website: String,
-  },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+    {timestamps: true, toJSON: {virtuals: true}, toObject: {virtuals: true}}
 );
 
 artistSchema.virtual("members", {
-  ref: "Member",
-  localField: "_id",
-  foreignField: "artist",
+    ref: "Member",
+    localField: "_id",
+    foreignField: "artist",
 });
 
 artistSchema.virtual("albums", {
-  ref: "Album",
-  localField: "_id",
-  foreignField: "artist",
+    ref: "Album",
+    localField: "_id",
+    foreignField: "artist",
 });
 
 artistSchema.virtual("singles", {
-  ref: "Single",
-  localField: "_id",
-  foreignField: "artist",
+    ref: "Single",
+    localField: "_id",
+    foreignField: "artist",
 });
 
 artistSchema.virtual("pictures", {
-  ref: "Picture",
-  localField: "_id",
-  foreignField: "for",
-  match: { currentlyUsed: true },
+    ref: "Picture",
+    localField: "_id",
+    foreignField: "for",
+    match: {currentlyUsed: true},
 });
 
 module.exports = model("Artist", artistSchema);

@@ -2,71 +2,63 @@ const Artist = require("../../model/entity/artist");
 const Member = require("../../model/entity/member");
 
 async function create(requestBody) {
-  const retrieveArtistData = new Promise((resolve) => {
-    Artist.findOne({ _id: requestBody.artistId }, (err, artist) => {
-      if (err) {
-        resolve(null);
-      }
+    const retrieveArtistData = new Promise((resolve) => {
+        Artist.findById(requestBody.artistId).exec((err, artist) => {
+            if (err) {
+                return resolve(null);
+            }
 
-      if (artist) {
-        resolve(artist);
-      }
-
-      resolve(null);
+            return resolve(artist);
+        });
     });
-  });
 
-  const artistData = await Promise.resolve(retrieveArtistData);
+    const artistData = await Promise.resolve(retrieveArtistData);
 
-  return new Promise((resolve, reject) => {
-    if (requestBody.members.length === 0) {
-      return reject("No member need to be added");
-    }
-
-    if (artistData === null) {
-      return reject("Artist not found.");
-    }
-
-    const memberName = requestBody.members.map(
-      (member) => new RegExp(`^${member.name}$`, "i")
-    );
-
-    Member.find()
-      .and([{ artist: artistData.id }, { name: { $in: memberName } }])
-      .exec((error, result) => {
-        if (result.length > 0) {
-          result.forEach((x) => console.log("Name already exist: %s", x.name));
-
-          return reject("Name already exist.");
+    return new Promise((resolve, reject) => {
+        if (requestBody.members.length === 0) {
+            return reject("No member need to be added");
         }
 
-        const members = [];
-        requestBody.members.forEach((member) => {
-          const memberData = new Member({
-            name: member.name,
-            birthday: member.birthday,
-            status: member.status,
-            summary: member.summary,
-            position: member.position,
-            artist: artistData.id,
-          });
+        if (artistData === null) {
+            return reject("Artist not found.");
+        }
 
-          members.push(memberData);
-        });
+        const memberName = requestBody.members.map(
+            (member) => new RegExp(`^${member.name}$`, "i")
+        );
 
-        Member.insertMany(members, (err, resp) => {
-          if (err) {
-            reject(err.message);
-          }
+        Member.find()
+            .and([{artist: artistData.id}, {name: {$in: memberName}}])
+            .exec((error, result) => {
+                if (result.length > 0) {
+                    result.forEach((x) => console.log("Name already exist: %s", x.name));
 
-          if (resp) {
-            resolve(resp);
-          }
+                    return reject("Name already exist.");
+                }
 
-          resolve(null);
-        });
-      });
-  });
+                const members = [];
+                requestBody.members.forEach((member) => {
+                    const memberData = new Member({
+                        name: member.name,
+                        birthday: member.birthday,
+                        status: member.status,
+                        summary: member.summary,
+                        position: member.position,
+                        artist: artistData.id,
+                    });
+
+                    members.push(memberData);
+                });
+
+                Member.insertMany(members, (err, resp) => {
+                    if (err) {
+                        return reject(err.message);
+                    }
+
+                    return resolve(resp);
+                });
+            });
+    });
 }
 
-module.exports = { create };
+module.exports = {create};
